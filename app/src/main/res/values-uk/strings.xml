@@ -92,8 +92,6 @@
     <string name="about_text">© Автори Сурми. Вільне програмне забезпечення за GNU GPL версії 3 або (на ваш вибір) будь-якої новішої (GPL-3.0-or-later), без жодних гарантій. Використовує бібліотеки AndroidX і Kotlin (Apache 2.0, The Android Open Source Project і JetBrains). Код написано за допомогою ШІ (Claude, Anthropic) під керівництвом і з тестуванням автора.</string>
     <string name="support_note">Посилання відкриваються в браузері, на сайтах самих організацій. Сурма нічого про це не знає й не отримує.</string>
     <string name="back">Назад</string>
-    <string name="cancel">Скасувати</string>
-    <string name="look">Налаштування</string>
     <string name="look_mode">Світла чи темна</string>
     <string name="mode_auto">Авто</string>
     <string name="mode_light">Світла</string>
@@ -117,7 +115,6 @@
     <string name="license">Ліцензія</string>
     <string name="about_title">Про застосунок</string>
     <string name="about_version">Версія %1$s</string>
-    <string name="notify_settings">Налаштування сповіщень</string>
     <string name="support_title">Підтримати Україну 💙💛</string>
     <string name="support_defence">Оборона</string>
     <string name="support_humanitarian">Гуманітарна допомога</string>
