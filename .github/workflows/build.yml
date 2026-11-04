@@ -1,0 +1,287 @@
+name: build
+
+on:
+  push:
+    branches: [main]
+    paths-ignore: ["**.md"]
+  pull_request:
+  workflow_dispatch:
+
+# Nothing gets write access unless a job asks for it below
+permissions:
+  contents: read
+
+# Stale pull request runs are stopped. On main a run is never stopped once started; a newer push
+# may replace one still waiting to start, and the newer version is then the one released
+concurrency:
+  group: build-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  # Tests and builds the unsigned APK. No secrets, no write access.
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    # The release job checks the APK it signs against this; another job cannot change a job's output
+    outputs:
+      apk_sha256: ${{ steps.sum.outputs.sha256 }}
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
+        with:
+          persist-credentials: false
+
+      - name: Check version
+        env:
+          GH_TOKEN: ${{ github.token }}
+          EVENT: ${{ github.event_name }}
+          REF: ${{ github.ref }}
+          REPO: ${{ github.repository }}
+        run: bash .github/check-version.sh "$EVENT" "$REF" "$REPO"
+
+      - name: Check the Gradle version and checksum
+        run: |
+          P=gradle/wrapper/gradle-wrapper.properties
+          grep -q 'gradle-8.14.3-bin.zip' "$P" || { echo "::error::$P must name the same Gradle as this workflow (8.14.3)"; exit 1; }
+          WANT="$(curl -fsSL https://services.gradle.org/distributions/gradle-8.14.3-bin.zip.sha256)"
+          grep -q "^distributionSha256Sum=$WANT$" "$P" || { echo "::error::$P checksum differs from Gradle's: $WANT"; exit 1; }
+
+      - uses: actions/setup-java@b6effb05e454b25005698d916606bdc6ffcbf961 # v5
+        with:
+          distribution: temurin
+          java-version: 17
+
+      # A release is built from scratch, without anything cached by earlier runs
+      - uses: gradle/actions/setup-gradle@ed408507eac070d1f99cc633dbcf757c94c7933a # v4
+        with:
+          gradle-version: "8.14.3"
+          cache-disabled: ${{ github.event_name == 'push' }}
+
+      - name: Test and build (unsigned)
+        shell: bash
+        run: |
+          set -o pipefail
+          # Every library is checked against gradle/verification-metadata.xml (refreshed only by deps.yml);
+          # the build fails on any changed library, and without the file.
+          test -f gradle/verification-metadata.xml || { echo "gradle/verification-metadata.xml is missing" | tee build.log; exit 1; }
+          gradle --no-daemon testReleaseUnitTest assembleRelease 2>&1 | tee build.log
+
+      - name: Check permissions (only what is expected)
+        run: bash .github/check-permissions.sh app/build/outputs/apk/release/app-release-unsigned.apk
+
+      - name: Check the manifest (no backups, no plain HTTP, not debuggable, nothing open to other apps)
+        run: |
+          set -o pipefail
+          AAPT=$(ls "$ANDROID_HOME"/build-tools/*/aapt2 | sort -V | tail -1)
+          "$AAPT" dump xmltree --file AndroidManifest.xml app/build/outputs/apk/release/app-release-unsigned.apk > manifest.txt
+          python3 .github/check-manifest.py manifest.txt
+
+      - name: Record the APK checksum
+        id: sum
+        run: echo "sha256=$(sha256sum app/build/outputs/apk/release/app-release-unsigned.apk | cut -d' ' -f1)" >> "$GITHUB_OUTPUT"
+
+      - name: Prepare build log
+        if: always()
+        shell: bash
+        run: |
+          mkdir -p log
+          { echo "run ${{ github.run_number }} ${{ job.status }}"; grep -E "^e: |error:|FAILED|What went wrong|Dependency verification" -A3 build.log | head -300; echo ----; tail -150 build.log; cat permissions.txt 2>/dev/null; cat manifest.txt 2>/dev/null | head -200; } > log/build.log || true
+          find app/build/test-results -name "*.xml" -exec cp {} log/ \; 2>/dev/null || true
+
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        if: always()
+        with:
+          name: build-log
+          path: log/
+          retention-days: 14
+
+      # Pictures of the screens drawn by the tests with made-up data, for review
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        if: always()
+        with:
+          name: screens
+          path: app/build/screens/
+          if-no-files-found: ignore
+          retention-days: 7
+
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: surma-unsigned
+          path: app/build/outputs/apk/release/app-release-unsigned.apk
+          retention-days: ${{ github.event_name == 'pull_request' && 3 || 14 }}
+
+      # To read crash traces from the shrunk (R8) build
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: surma-mapping
+          path: app/build/outputs/mapping/release/mapping.txt
+          retention-days: 14
+
+  # Puts the screen pictures on the ci-screens branch, to look at them without downloading anything.
+  # Runs no project code; only for this repository's own branches (never for pull requests from forks).
+  screens:
+    needs: build
+    if: always() && (github.event_name == 'push' || github.event.pull_request.head.repo.full_name == github.repository)
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    concurrency:
+      group: ci-screens
+      cancel-in-progress: false
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
+        continue-on-error: true
+        with:
+          name: screens
+          path: screens
+      - name: Push the pictures
+        env:
+          TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPO: ${{ github.repository }}
+          SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          [ -d screens ] && ls screens/*.png >/dev/null 2>&1 || { echo "No pictures"; exit 0; }
+          mkdir push && cp screens/*.png push/ && cd push
+          git init -q && git checkout -q -b ci-screens && git add .
+          git -c user.name=ci -c user.email=ci@localhost commit -qm "screens for ${SHA:0:7}"
+          # A dropped connection: try again, and never fail a build over pictures
+          for i in 1 2 3; do
+            git push -qf "https://x-access-token:${TOKEN}@github.com/${REPO}" ci-screens && exit 0
+            sleep $((i * 5))
+          done
+          echo "::warning::Could not push the pictures"
+
+  # Signs. Only for main, only in the "release" environment (needs the owner's approval), and with
+  # no Gradle or other third-party build code: just the Android SDK's own zipalign and apksigner.
+  release:
+    needs: build
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    environment: release
+    concurrency:
+      group: release
+      cancel-in-progress: false
+    permissions:
+      contents: read
+    outputs:
+      signed: ${{ steps.secrets.outputs.ready }}
+    steps:
+      - name: Check that signing secrets exist
+        id: secrets
+        env:
+          PASS: ${{ secrets.SURMA_SIGNING_PASS }}
+          STORE: ${{ secrets.SURMA_STORE_PASS }}
+          KEYSTORE: ${{ secrets.SURMA_KEYSTORE }}
+        run: |
+          if [ -n "$PASS" ] && [ -n "$STORE" ] && [ -n "$KEYSTORE" ]; then
+            echo "ready=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "::error::Signing secrets are not set in the release environment; nothing is published."
+            exit 1
+          fi
+
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
+        with:
+          persist-credentials: false
+          sparse-checkout: |
+            .github
+            signing
+            version.txt
+          sparse-checkout-cone-mode: false
+
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
+        with:
+          name: surma-unsigned
+          path: unsigned
+
+      - name: Check it is the APK the build made
+        env:
+          SUM: ${{ needs.build.outputs.apk_sha256 }}
+        run: |
+          [[ "$SUM" =~ ^[0-9a-f]{64}$ ]] || { echo "::error::No APK checksum from the build"; exit 1; }
+          echo "$SUM  unsigned/app-release-unsigned.apk" | sha256sum -c -
+
+      # Checked again here, before signing, in a step that has no secrets
+      - name: Check permissions again
+        run: bash .github/check-permissions.sh unsigned/app-release-unsigned.apk
+
+      - name: Sign
+        env:
+          PASS: ${{ secrets.SURMA_SIGNING_PASS }}
+          STORE: ${{ secrets.SURMA_STORE_PASS }}
+          KEYSTORE: ${{ secrets.SURMA_KEYSTORE }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          BT=$(ls -d "$ANDROID_HOME"/build-tools/* | sort -V | tail -1)
+          # The encrypted keystore lives only in the release environment's secrets, not in the repository.
+          printf %s "$KEYSTORE" | base64 -d > "$RUNNER_TEMP/k.enc"
+          printf %s "$PASS" > "$RUNNER_TEMP/p"
+          openssl enc -d -aes-256-cbc -pbkdf2 -iter 600000 -in "$RUNNER_TEMP/k.enc" -out "$RUNNER_TEMP/surma.jks" -pass file:"$RUNNER_TEMP/p"
+          rm "$RUNNER_TEMP/p" "$RUNNER_TEMP/k.enc"
+          mkdir -p out
+          "$BT/zipalign" -P 16 -f 4 unsigned/app-release-unsigned.apk "$RUNNER_TEMP/aligned.apk"
+          OUT="out/surma-$(tr -d '[:space:]' < version.txt).apk"
+          "$BT/apksigner" sign --ks "$RUNNER_TEMP/surma.jks" --ks-key-alias surma \
+            --ks-pass env:STORE --key-pass env:STORE --out "$OUT" "$RUNNER_TEMP/aligned.apk"
+          rm -f "$RUNNER_TEMP/surma.jks"
+          # Exactly one signer, and it must be exactly Surma's own (signing/certificate-sha256.txt)
+          CERT="$(tr -d '[:space:]' < signing/certificate-sha256.txt)"
+          [[ "$CERT" =~ ^[0-9a-f]{64}$ ]] || { echo "::error::Bad signing/certificate-sha256.txt"; exit 1; }
+          "$BT/apksigner" verify --print-certs "$OUT" | tee certs.txt
+          # Older apksigner prints "Signer #1 certificate ...", newer "V3.0 Signer: certificate ...".
+          # Each signing scheme may repeat the same certificate; any second, different one fails.
+          DIGESTS="$({ grep -iE "Signer[^:]*:? *certificate SHA-256 digest:" certs.txt || true; } | sed -E 's/.*digest: *//' | tr -d ' ' | tr 'A-F' 'a-f' | sort -u)"
+          if [ "$DIGESTS" != "$CERT" ]; then
+            echo "::error::Unexpected signing certificate"; exit 1
+          fi
+
+      - name: Remove the decrypted key
+        if: always()
+        run: rm -f "$RUNNER_TEMP/surma.jks" "$RUNNER_TEMP/p" "$RUNNER_TEMP/k.enc"
+
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: surma-signed
+          path: out/*.apk
+          retention-days: 7
+
+  # Publishes the signed APK. Never sees the signing key; uses only GitHub's own gh tool.
+  publish:
+    needs: release
+    if: needs.release.outputs.signed == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    concurrency:
+      group: publish
+      cancel-in-progress: false
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
+        with:
+          sparse-checkout: |
+            .github/release-notes.md
+            .github/check-version.sh
+            version.txt
+          sparse-checkout-cone-mode: false
+          persist-credentials: false
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
+        with:
+          name: surma-signed
+          path: out
+      - name: Publish release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPO: ${{ github.repository }}
+        run: |
+          # Checked again right before publishing: two approved runs must not publish out of order
+          bash .github/check-version.sh push refs/heads/main "$REPO"
+          V="$(tr -d '[:space:]' < version.txt)"
+          # The SHA-256 of the APK, so anyone can check the file they downloaded is this one
+          cp .github/release-notes.md notes.md
+          printf '\nSHA-256:\n```\n%s\n```\n' "$(cd out && sha256sum *.apk)" >> notes.md
+          gh release create "v$V" out/*.apk \
+            --repo "${{ github.repository }}" --target "${{ github.sha }}" \
+            --title "Surma $V" --notes-file notes.md --latest

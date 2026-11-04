@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- The window behind the screen at start, as the default day theme -->
+    <color name="background">#E6DFD5</color>
+    <!-- The icon: night blue, gold, cream -->
+    <color name="icon_bg">#1E3A66</color>
+    <color name="icon_cream">#FEF2DD</color>
+    <color name="icon_gold">#FEC21A</color>
+</resources>
