@@ -103,13 +103,13 @@ class ScreensTest {
     @Config(qualifiers = "+night")
     @Test fun homeWatchingDark() = home("02-home-watching-dark", Theme.ZORIANA_NICH, HomeUi(on, checked, feed))
     @Test fun homeOff() = home("03-home-off", Theme.NEBO, HomeUi(WatchSettings(), WatchState(), emptyList()))
-    @Test fun homeQuiet() = home("04-home-quiet", Theme.KREYDA, HomeUi(on.copy(oblasts = emptySet()), checked, emptyList()))
+    @Test fun homeQuiet() = home("04-home-quiet", Theme.LINEN, HomeUi(on.copy(oblasts = emptySet()), checked, emptyList()))
     @Test fun homeHints() = home("05-home-hints", Theme.SYSTEM,
         HomeUi(on, checked, feed.take(2), canNotify = false, exactAllowed = false, batteryFree = false))
     @Test fun homeNoNetwork() = home("06-home-no-network", Theme.GLYNA,
         HomeUi(on, checked.copy(lastCheck = now, failures = 3, problem = Problem.NETWORK), feed))
     @Config(qualifiers = "+night")
-    @Test fun homePodillia() = home("07-home-podillia", Theme.PODILLIA, HomeUi(on, checked, feed))
+    @Test fun homeMak() = home("07-home-mak", Theme.MAK, HomeUi(on, checked, feed))
 
     @Config(qualifiers = "uk-w400dp-h3000dp-xhdpi")
     @Test fun settingsPage() = settings("08-settings", Theme.SYSTEM)
@@ -119,7 +119,7 @@ class ScreensTest {
     @Config(qualifiers = "uk-w400dp-h2600dp-xhdpi")
     @Test fun about() = shot("10-about", Theme.SYSTEM) { AboutPage(onBack = {}) }
     @Config(qualifiers = "en-w400dp-h2600dp-xhdpi")
-    @Test fun aboutEnglish() = shot("11-about-english", Theme.PODILLIA) { AboutPage(onBack = {}) }
+    @Test fun aboutEnglish() = shot("11-about-english", Theme.MAK) { AboutPage(onBack = {}) }
 
     private fun help(lang: String) = Help.parse(File("src/main/assets/help/$lang.json").readText())
     private val tabs: @Composable () -> Unit = { Tabs(MainActivity.Page.HELP) {} }

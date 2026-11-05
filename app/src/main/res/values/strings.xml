@@ -113,11 +113,11 @@
     <string name="mode_dark">Dark</string>
     <string name="day_theme">Theme by day</string>
     <string name="night_theme">Theme by night</string>
-    <string name="theme_kreyda">Chalk</string>
+    <string name="theme_linen">Linen</string>
     <string name="theme_visk">Beeswax</string>
     <string name="theme_nebo">Sky</string>
-    <string name="theme_podillia">Podillia</string>
-    <string name="theme_hutsulshchyna">Hutsul</string>
+    <string name="theme_mak">Poppy</string>
+    <string name="theme_smereka">Spruce</string>
     <string name="theme_chornozem">Black earth</string>
     <string name="theme_system">Phone colours</string>
     <string name="theme_system_dark">Phone colours</string>
