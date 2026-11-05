@@ -62,7 +62,7 @@
     <string name="recent_empty">Quiet for now. New threats will appear here.</string>
     <string name="recent_empty_off">Turn on watching to see threats here.</string>
     <string name="yours">Your region</string>
-    <string name="to_target">towards %1$s</string>
+    <string name="to_target">heading: %1$s</string>
     <string name="count_group">group</string>
     <string name="not_on_list">not on Surma\'s list yet</string>
     <string name="as_written">The post:</string>

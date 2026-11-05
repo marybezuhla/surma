@@ -83,7 +83,7 @@ object Labels {
         }
     }
 
-    /** "курсом на Конотоп · Сумська область · з півночі": what is known about where, in one line. */
+    /** "напрямок: Конотоп · Сумська область · з півночі": what is known about where, in one line (the name as the register writes it). */
     fun where(context: Context, t: Threat): String = buildList {
         val to = t.target?.label ?: t.unresolvedTarget
         to?.let { add(context.getString(R.string.to_target, it)) }

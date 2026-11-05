@@ -60,7 +60,7 @@
     <string name="recent_empty">Поки тихо. Нові загрози зʼявляться тут.</string>
     <string name="recent_empty_off">Увімкніть стеження, щоб бачити тут загрози.</string>
     <string name="yours">Ваша область</string>
-    <string name="to_target">курсом на %1$s</string>
+    <string name="to_target">напрямок: %1$s</string>
     <string name="count_group">група</string>
     <string name="not_on_list">поки немає в списку Сурми</string>
     <string name="as_written">У дописі:</string>
