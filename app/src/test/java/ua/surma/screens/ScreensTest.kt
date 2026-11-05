@@ -18,6 +18,7 @@ import org.junit.runner.RunWith
 import org.robolectric.Shadows.shadowOf
 import org.robolectric.annotation.Config
 import org.robolectric.annotation.GraphicsMode
+import ua.surma.TestPlaces
 import ua.surma.alerts.ChannelPost
 import ua.surma.alerts.Oblast
 import ua.surma.alerts.PostParser
@@ -60,7 +61,7 @@ class ScreensTest {
             "Відбій загрози застосування балістики." to 40L,
         ).mapIndexed { i, (text, minutesAgo) ->
             val post = ChannelPost(1000L - i, now - minutesAgo * 60, text)
-            PostParser.parse(post.text).map { FeedItem(post.id, post.epochSeconds!!, it) }
+            PostParser.parse(post.text, TestPlaces.index).map { FeedItem(post.id, post.epochSeconds!!, it) }
         }.flatten()
     }
 

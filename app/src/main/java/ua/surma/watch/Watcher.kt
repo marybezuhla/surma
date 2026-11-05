@@ -22,7 +22,7 @@ object Watcher {
         val after = try {
             val posts = Channel.posts(afterId = before.lastId.takeIf { it > 0 })
             val fresh = Rules.newPosts(posts, before.lastId)
-            val items = fresh.flatMap { p -> PostParser.parse(p.text).map { FeedItem(p.id, p.epochSeconds ?: now, it) } }
+            val items = fresh.flatMap { p -> PostParser.parse(p.text, Places.get(context)).map { FeedItem(p.id, p.epochSeconds ?: now, it) } }
             Feed.add(context, items, now)
             for (p in fresh) {
                 if (!Rules.isFresh(p, now)) continue

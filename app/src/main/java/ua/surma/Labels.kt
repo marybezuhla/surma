@@ -85,7 +85,7 @@ object Labels {
 
     /** "курсом на Конотоп · Сумська область · з півночі": what is known about where, in one line. */
     fun where(context: Context, t: Threat): String = buildList {
-        val to = t.target?.name ?: t.unresolvedTarget
+        val to = t.target?.label ?: t.unresolvedTarget
         to?.let { add(context.getString(R.string.to_target, it)) }
         t.oblasts.forEach { add(context.getString(oblast(it))) }
         t.from.forEach { add(context.getString(from(it))) }

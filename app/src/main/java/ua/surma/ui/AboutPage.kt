@@ -137,6 +137,10 @@ internal fun AboutPage(onBack: () -> Unit) {
                 Spacer(Modifier.height(4.dp))
                 Text(stringResource(R.string.about_text), style = MaterialTheme.typography.bodyMedium, color = scheme.onSurfaceVariant,
                     modifier = Modifier.fillMaxWidth())
+                Spacer(Modifier.height(8.dp))
+                // Where the places and their points come from, as the ODbL asks
+                Text(stringResource(R.string.about_data), style = MaterialTheme.typography.bodyMedium, color = scheme.onSurfaceVariant,
+                    modifier = Modifier.fillMaxWidth())
                 val context = LocalContext.current
                 val version = remember {
                     runCatching { context.packageManager.getPackageInfo(context.packageName, 0).versionName }.getOrNull()

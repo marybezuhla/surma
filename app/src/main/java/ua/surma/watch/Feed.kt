@@ -6,6 +6,7 @@ import org.json.JSONObject
 import ua.surma.alerts.Direction
 import ua.surma.alerts.Oblast
 import ua.surma.alerts.Place
+import ua.surma.alerts.PlaceKind
 import ua.surma.alerts.Rules
 import ua.surma.alerts.Threat
 import ua.surma.alerts.ThreatType
@@ -62,7 +63,7 @@ object Feed {
             put("oblasts", JSONArray(t.oblasts.map { it.key }))
             t.target?.let { p ->
                 put("target", JSONObject().put("name", p.name).put("oblast", p.oblast.key).put("lat", p.lat).put("lon", p.lon)
-                    .put("approx", p.approximate))
+                    .put("kind", p.kind.code.toString()))
             }
             t.unresolvedTarget?.let { put("unknown", it) }
             put("from", JSONArray(t.from.map { it.key }))
@@ -79,7 +80,8 @@ object Feed {
             fun keys(name: String) = o.optJSONArray(name)?.let { arr -> (0 until minOf(arr.length(), 30)).map { arr.optString(it) } } ?: emptyList()
             val target = o.optJSONObject("target")?.let { p ->
                 val oblast = Oblast.of(p.optString("oblast")) ?: return@let null
-                Place(p.optString("name").take(80), oblast, p.optDouble("lat"), p.optDouble("lon"), p.optBoolean("approx"))
+                val kind = p.optString("kind").singleOrNull()?.let { PlaceKind.of(it) } ?: PlaceKind.CITY
+                Place(p.optString("name").take(80), oblast, p.optDouble("lat"), p.optDouble("lon"), kind)
                     .takeIf { it.name.isNotEmpty() && it.lat in 44.0..53.0 && it.lon in 22.0..41.0 }
             }
             out += FeedItem(

@@ -28,8 +28,11 @@ enum class Direction(val key: String, val bearing: Int) {
     }
 }
 
-/** A city or village known to Surma. approximate: the point still has to be checked against the official register. */
-data class Place(val name: String, val oblast: Oblast, val lat: Double, val lon: Double, val approximate: Boolean = false)
+/** A place of the official register, with its point from OpenStreetMap. */
+data class Place(val name: String, val oblast: Oblast, val lat: Double, val lon: Double, val kind: PlaceKind = PlaceKind.CITY) {
+    /** "Конотопський район" for a district; the name itself for anything else. */
+    val label: String get() = if (kind == PlaceKind.DISTRICT) "$name район" else name
+}
 
 data class Threat(
     val type: ThreatType,

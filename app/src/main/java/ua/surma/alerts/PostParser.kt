@@ -38,6 +38,8 @@ object PostParser {
         "$U$NL(курсом на|вектором руху на|напрямком на|в напрямку|у напрямку|у бік|в бік|в районі|у районі)\\s+((м|с|смт|н\\.\\s?п)\\.\\s*)?",
     )
     private val WEAK_CUE = Regex("$U${NL}на\\s+((м|с|смт|н\\.\\s?п)\\.\\s*)?")
+    /** Where a village may be named: after a word for "towards" or "near". */
+    private val NEAR_CUE = Regex("$U$NL(біля|поблизу|повз|через|над|до)\\s+((м|с|смт|н\\.\\s?п)\\.\\s*)?")
 
     private val COUNT = Regex("$U(\\d+)\\s*[хx×*]?\\s*(ударн|бпла|шахед|ракет|каб|крилат|реактивн|балістичн|ціл)")
     private val GROUP = Regex("$U${NL}груп")
@@ -62,8 +64,11 @@ object PostParser {
 
     fun isReport(text: String): Boolean = REPORT.containsMatchIn(normalize(text))
 
-    fun parse(text: String): List<Threat> {
+    /** [places]: the register of places (see [PlaceIndex]); without it only regions are found. */
+    fun parse(text: String, places: PlaceIndex = PlaceIndex.EMPTY): List<Threat> {
         if (text.length > Rules.MAX_POST_CHARS || isReport(text)) return emptyList()
+        // Regions named anywhere in the post tell which of several places of one name is meant
+        val postRegions = Gazetteer.oblasts(normalize(text)).mapNotNull { it.oblast }.toSet()
         val out = mutableListOf<Threat>()
         var inherited: ThreatType? = null
         // A line with a kind but no place yet ("Ударні БпЛА:"): kept until the lines under it say where
@@ -80,7 +85,7 @@ object PostParser {
                 previousEmitted = false
                 continue
             }
-            val t = parseLine(line, norm, type)
+            val t = parseLine(line, norm, type, places, postRegions)
             val hasPlace = t.target != null || t.unresolvedTarget != null || t.oblasts.isNotEmpty() || t.from.isNotEmpty()
             var emitted = false
 
@@ -118,14 +123,18 @@ object PostParser {
         return out.take(Rules.MAX_THREATS_PER_POST)
     }
 
-    private fun parseLine(line: String, norm: String, type: ThreatType): Threat {
+    private fun parseLine(line: String, norm: String, type: ThreatType, places: PlaceIndex, postRegions: Set<Oblast>): Threat {
         // Places after "з/зі/із" are where it comes from ("з Криму"), not where the threat is
         val origins = FROM.findAll(norm).map { m ->
             val seg = m.groups[2]!!.range
             val stop = FROM_STOP.find(" " + m.groupValues[2])?.range?.first?.let { seg.first + it - 1 }
             seg.first..(stop?.minus(1) ?: seg.last)
         }.toList()
-        val geo = Gazetteer.find(norm).filter { g -> origins.none { g.start in it } }
+        val regionMatches = Gazetteer.oblasts(norm)
+        val cueEnds = listOf(STRONG_CUE, WEAK_CUE, NEAR_CUE).flatMap { c -> c.findAll(norm).map { it.range.last + 1 }.toList() }.toSet()
+        val lineRegions = regionMatches.filter { g -> origins.none { g.start in it } }.mapNotNull { it.oblast }
+        val placeMatches = Gazetteer.places(line, norm, places, cueEnds, lineRegions.ifEmpty { postRegions }, regionMatches)
+        val geo = (regionMatches + placeMatches).filter { g -> origins.none { g.start in it } }.sortedBy { it.start }
 
         var target: Place? = null
         var unknown: String? = null
@@ -142,16 +151,18 @@ object PostParser {
                 val pos = m.range.last + 1
                 val g = at(pos)
                 when {
-                    g?.city != null && target == null -> target = g.city.place
-                    g?.oblast != null && g.city == null -> oblasts += g.oblast
+                    g?.place != null && target == null -> target = g.place
+                    g?.name != null && target == null && unknown == null -> unknown = g.name
+                    g != null && g.place == null && g.name == null -> g.oblast?.let { oblasts += it }
                     g == null && target == null && unknown == null -> unknown = capitalisedAt(pos)
                 }
             }
             if (target != null) break
         }
-        if (target == null) geo.firstOrNull { it.city != null }?.let { target = it.city!!.place }
+        // A city or district named without "на": still the place of the threat
+        if (target == null && unknown == null) geo.firstOrNull { it.place != null }?.let { target = it.place }
         if (target != null) unknown = null
-        geo.forEach { g -> if (g.city == null) g.oblast?.let { oblasts += it } }
+        geo.forEach { g -> if (g.place == null) g.oblast?.let { oblasts += it } }
         target?.let { oblasts += it.oblast }
 
         val count = COUNT.find(norm)?.groupValues?.get(1)?.toIntOrNull()?.takeIf { it in 1..Rules.MAX_COUNT }
