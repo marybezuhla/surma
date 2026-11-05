@@ -1,17 +1,15 @@
-Сурма 0.2.0
+Сурма 0.2.1
 
-- **Усі місця України:** ≈29,7 тис. міст, селищ і сіл та 136 районів з Кодифікатора, у будь-якому відмінку («на Іванівку», «в районі Білої Церкви»). Однакові назви розрізняються за областю з допису; якщо це неможливо, назва показується текстом.
-- **Що робити:** нова вкладка з кнопкою 112 і картками «Повітряна тривога», «Балістика», «Дрон поруч», «Сильна кровотеча», «Людина непритомна» — дослівно зі «Спротиву», з малюнками. Біля кожної загрози — кнопка «Що робити». Фахівець картки ще не перевіряв.
-- **Англійською** назви місць пишуться латиницею за офіційними правилами транслітерації (Kyiv, Kropyvnytskyi), а рядок допису позначено як оригінал українською.
+- **Нова адреса на GitHub:** `marybezuhla`. Посилання на код, ліцензію й «Повідомити про помилку» ведуть туди.
+- **Нові назви трьох тем**, щоб усі називалися за кольором чи природою, а не за місцевістю: Льон (була Крейда), Мак (Поділля), Смерека (Гуцульщина). Кольори ті самі.
 
 Сурма — додаткове джерело й може помилятися. Вона не замінює сирену та офіційні сповіщення. Потрібен Android 12 або новіший. Точки місць © учасники OpenStreetMap (ODbL).
 
 ---
 
-Surma 0.2.0
+Surma 0.2.1
 
-- **Every place in Ukraine:** ≈29.7 thousand cities, towns and villages and 136 districts of the official register, in any grammatical case. Places sharing a name are told apart by the region in the post; if that is not possible, the name is shown as text.
-- **What to do:** a new tab with a 112 button and the cards "Air alert", "Ballistic missiles", "Drone nearby", "Severe bleeding" and "Unconscious person", word for word from Sprotyv, with pictures. Each threat has a "What to do" button. Not yet reviewed by a specialist.
-- **In English**, place names are written in Latin letters by Ukraine's official transliteration rules (Kyiv, Kropyvnytskyi), and the post's own line is marked as the original in Ukrainian.
+- **New GitHub address:** `marybezuhla`. Links to the code, the licence and "Report a problem" go there.
+- **Three themes have new names**, so all are named after a colour or nature, not a place: Linen (was Chalk), Poppy (Podillia), Spruce (Hutsul). The colours are the same.
 
 Surma is a supplementary source and can be wrong. It does not replace sirens or official alerts. Requires Android 12 or newer. Points of places © OpenStreetMap contributors (ODbL).
