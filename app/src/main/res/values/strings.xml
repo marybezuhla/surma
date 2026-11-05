@@ -65,7 +65,8 @@
     <string name="to_target">heading: %1$s</string>
     <string name="count_group">group</string>
     <string name="not_on_list">not on Surma\'s list yet</string>
-    <string name="as_written">The post:</string>
+    <string name="as_written">Original post (Ukrainian):</string>
+    <string name="district_name">%1$s district</string>
     <string name="disclaimer">Surma reads the posts of the Air Force channel automatically and can be wrong. It does not replace sirens, official alerts or what local authorities say.</string>
     <string name="notify_denied">Android does not allow Surma\'s notifications: alerts will not sound.</string>
     <string name="notify_allow">Allow notifications</string>
