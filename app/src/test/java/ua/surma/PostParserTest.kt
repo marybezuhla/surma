@@ -16,7 +16,8 @@ import ua.surma.alerts.ThreatType
  * STYLE: written in the channel's usual wording; to be replaced with real posts as they are collected.
  */
 class PostParserTest {
-    private fun one(text: String): Threat = PostParser.parse(text).also { assertEquals(text, 1, it.size) }[0]
+    private fun parse(text: String) = PostParser.parse(text, TestPlaces.index)
+    private fun one(text: String): Threat = parse(text).also { assertEquals(text, 1, it.size) }[0]
 
     // ── REAL ────────────────────────────────────────────────────────────
     @Test fun real_drones_two_directions() {
@@ -76,12 +77,66 @@ class PostParserTest {
         assertEquals(listOf(Oblast.SUMY), t.oblasts)
     }
 
-    @Test fun count_and_unknown_village() {
+    @Test fun count_and_village_from_register() {
         val t = one("3х ударних БпЛА на Харківщині курсом на Кегичівку.")
         assertEquals(3, t.count)
         assertEquals(listOf(Oblast.KHARKIV), t.oblasts)
+        assertEquals("Кегичівка", t.target?.name)
+        assertNull(t.unresolvedTarget)
+    }
+
+    @Test fun unknown_place_stays_text() {
+        val t = one("БпЛА на Харківщині курсом на Небувалівку.")
         assertNull(t.target)
-        assertEquals("Кегичівку", t.unresolvedTarget)
+        assertEquals("Небувалівку", t.unresolvedTarget)
+    }
+
+    @Test fun same_name_decided_by_region() {
+        // There are many places called Іванівка; the region in the post picks the one
+        val t = one("Ударні БпЛА на Іванівку (Львівщина)")
+        assertEquals("Іванівка", t.target?.name)
+        assertEquals(Oblast.LVIV, t.target?.oblast)
+    }
+
+    @Test fun villages_of_one_name_in_one_region_stay_text() {
+        // Kharkiv region has eleven villages called Іванівка: no guess, but the region is known
+        val t = one("Ударні БпЛА курсом на Іванівку (Харківщина)")
+        assertNull(t.target)
+        assertEquals("Іванівку", t.unresolvedTarget)
+        assertEquals(listOf(Oblast.KHARKIV), t.oblasts)
+    }
+
+    @Test fun same_name_without_region_stays_text() {
+        val t = one("Ударні БпЛА курсом на Іванівку")
+        assertNull(t.target)
+        assertEquals("Іванівку", t.unresolvedTarget)
+    }
+
+    @Test fun region_named_on_another_line() {
+        val ts = parse("Львівщина:\nУдарні БпЛА курсом на Іванівку")
+        assertEquals(Oblast.LVIV, ts.single().target?.oblast)
+    }
+
+    @Test fun district() {
+        val t = one("Ударні БпЛА у Конотопському районі")
+        assertEquals("Конотопський район", t.target?.label)
+        assertEquals(listOf(Oblast.SUMY), t.oblasts)
+    }
+
+    @Test fun regional_centre_wins_over_villages_of_the_same_name() {
+        assertEquals(Oblast.MYKOLAIV, one("Ракета на Миколаїв").target?.oblast)
+        assertEquals(Oblast.KYIV_CITY, one("Швидкісна ціль на Київ!").target?.oblast)
+    }
+
+    @Test fun village_needs_a_word_for_towards() {
+        // "Мирне" is a village name too, but here it is only a word at the start of a line
+        val t = one("БпЛА на Сумщині")
+        assertNull(t.target)
+        assertEquals(listOf(Oblast.SUMY), t.oblasts)
+    }
+
+    @Test fun city_without_cue() {
+        assertEquals("Харків", one("Вибухи у Харкові — БпЛА").target?.name)
     }
 
     @Test fun all_clear_wins_over_ballistic() {
@@ -89,7 +144,7 @@ class PostParserTest {
     }
 
     @Test fun header_with_lines_inherits_type() {
-        val ts = PostParser.parse("Ударні БпЛА:\nЧернігівщина — курсом на Ніжин\nПолтавщина — курсом на Миргород")
+        val ts = parse("Ударні БпЛА:\nЧернігівщина — курсом на Ніжин\nПолтавщина — курсом на Миргород")
         assertEquals(2, ts.size)
         assertTrue(ts.all { it.type == ThreatType.DRONE })
         assertEquals(listOf("Ніжин", "Миргород"), ts.map { it.target?.name })
@@ -100,7 +155,7 @@ class PostParserTest {
         val text = "У ніч на 4 листопада противник атакував 120 ударними БпЛА.\n" +
             "Станом на 09:00 збито/подавлено 98 ворожих БпЛА на півночі, сході та півдні країни."
         assertTrue(PostParser.isReport(text))
-        assertTrue(PostParser.parse(text).isEmpty())
+        assertTrue(parse(text).isEmpty())
     }
 
     @Test fun multiword_city_genitive() {
@@ -133,10 +188,10 @@ class PostParserTest {
     }
 
     @Test fun lines_without_a_kind_are_skipped() {
-        assertTrue(PostParser.parse("Слава Україні!\nДякуємо ППО").isEmpty())
+        assertTrue(parse("Слава Україні!\nДякуємо ППО").isEmpty())
     }
 
     @Test fun too_long_post_is_not_read() {
-        assertTrue(PostParser.parse("БпЛА на Київ ".repeat(500)).isEmpty())
+        assertTrue(parse("БпЛА на Київ ".repeat(500)).isEmpty())
     }
 }

@@ -36,7 +36,7 @@ class ChannelPageTest {
 
     @Test fun wrappedLineBecomesOneThreat() {
         val post = ChannelPage.parse(page).single { it.id == 101L }
-        assertEquals("Шостка", PostParser.parse(post.text).single().target?.name)
+        assertEquals("Шостка", PostParser.parse(post.text, TestPlaces.index).single().target?.name)
     }
 
     @Test fun unreadableTimeIsNull() {

@@ -9,7 +9,7 @@
 ## Можливості
 
 - **Сповіщення про загрози** у вибраних областях: ударні й реактивні БпЛА, ракети, балістика, швидкісні цілі, КАБи, активність авіації, відбій. За бажанням — загрози для всієї країни без названої області.
-- **Що й куди:** тип загрози, кількість, область, напрямок руху («курсом на…») і звідки. Під кожною загрозою — сам рядок допису, бо автоматичне розпізнавання може помилитися.
+- **Що й куди:** тип загрози, кількість, область, напрямок руху («курсом на…») і звідки. Сурма знає всі ≈29,7 тис. міст, селищ і сіл та 136 районів з Кодифікатора, у будь-якому відмінку («на Іванівку», «в районі Білої Церкви»); однакові назви розрізняє за областю з допису, а якщо не може — показує назву текстом. Під кожною загрозою — сам рядок допису, бо автоматичне розпізнавання може помилитися.
 - **Ощадливо:** під час загроз перевіряє частіше (кожні 20–60 с), у тиші — рідше (45 с — 3 хв). Між перевірками телефон спить.
 - **На заблокованому екрані** — лише тип загрози («Сурма: балістика»), без області.
 - **Вигляд:** кольори телефона або світлі й темні теми з рідними назвами. Для телефонів, планшетів і розкладних.
@@ -45,7 +45,7 @@ A private air-raid alert app for Android. It watches the public channel of the U
 ## Features
 
 - **Alerts for threats** in the regions you choose: attack and jet drones, missiles, ballistic missiles, high-speed targets, guided bombs, aircraft activity, all clear. Optionally, nationwide threats that name no region.
-- **What and where:** kind, number, region, heading ("towards…") and where from. Each threat shows the post's own line, because automatic reading can be wrong.
+- **What and where:** kind, number, region, heading ("towards…") and where from. Surma knows all ≈29.7 thousand cities, towns and villages and 136 districts of the official register, in any grammatical case; places that share a name are told apart by the region in the post, and if that is not possible the name is shown as text. Each threat shows the post's own line, because automatic reading can be wrong.
 - **Easy on the battery:** checks more often while threats come (every 20–60 s), less often when quiet (45 s – 3 min). The phone sleeps between checks.
 - **On the lock screen** only the kind of threat shows ("Surma: ballistic missiles"), never the region.
 - **Look:** the phone's own colours, or light and dark themes. For phones, tablets and foldables.
@@ -82,8 +82,8 @@ The code was written with AI (Claude, Anthropic), directed and tested by the aut
 
 ## Ліцензія · License
 
-**GPL-3.0-or-later.** Сурма — вільне програмне забезпечення: її можна поширювати та змінювати за умовами GNU General Public License, опублікованої Free Software Foundation, версії 3 або (на ваш вибір) будь-якої новішої. Вона поширюється без жодних гарантій. Повний текст: [LICENSE](LICENSE). Бібліотеки: [NOTICE.md](NOTICE.md).
+**GPL-3.0-or-later.** Сурма — вільне програмне забезпечення: її можна поширювати та змінювати за умовами GNU General Public License, опублікованої Free Software Foundation, версії 3 або (на ваш вибір) будь-якої новішої. Вона поширюється без жодних гарантій. Повний текст: [LICENSE](LICENSE). Бібліотеки й дані (зокрема точки місць © учасники OpenStreetMap, ODbL): [NOTICE.md](NOTICE.md).
 
-Surma is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version. It comes without any warranty. Full text: [LICENSE](LICENSE). Libraries: [NOTICE.md](NOTICE.md).
+Surma is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version. It comes without any warranty. Full text: [LICENSE](LICENSE). Libraries and data (including points of places © OpenStreetMap contributors, ODbL): [NOTICE.md](NOTICE.md).
 
 SPDX-License-Identifier: GPL-3.0-or-later

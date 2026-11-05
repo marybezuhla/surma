@@ -60,7 +60,7 @@
     <string name="recent_empty">Поки тихо. Нові загрози зʼявляться тут.</string>
     <string name="recent_empty_off">Увімкніть стеження, щоб бачити тут загрози.</string>
     <string name="yours">Ваша область</string>
-    <string name="to_target">курсом на %1$s</string>
+    <string name="to_target">напрямок: %1$s</string>
     <string name="count_group">група</string>
     <string name="not_on_list">поки немає в списку Сурми</string>
     <string name="as_written">У дописі:</string>
@@ -90,6 +90,7 @@
     <string name="about_privacy_title">Що бачать інші</string>
     <string name="about_privacy">Сурма читає публічну вебсторінку каналу на t.me, тож Telegram бачить адресу телефона щоразу, коли вона перевіряє (кожні 20 секунд — 3 хвилини, поки стеження ввімкнено). Більше нічого не надсилається: Сурма не знає й не передає, де ви. Позначені області лишаються на цьому телефоні.</string>
     <string name="about_text">© Автори Сурми. Вільне програмне забезпечення за GNU GPL версії 3 або (на ваш вибір) будь-якої новішої (GPL-3.0-or-later), без жодних гарантій. Використовує бібліотеки AndroidX і Kotlin (Apache 2.0, The Android Open Source Project і JetBrains). Код написано за допомогою ШІ (Claude, Anthropic) під керівництвом і з тестуванням автора.</string>
+    <string name="about_data">Місця: Кодифікатор адміністративно-територіальних одиниць (КАТОТТГ), відкриті дані Мінрозвитку громад і територій. Їхні точки на карті: © учасники OpenStreetMap, ліцензія Open Database License (ODbL), через проєкт ua-geo.</string>
     <string name="support_note">Посилання відкриваються в браузері, на сайтах самих організацій. Сурма нічого про це не знає й не отримує.</string>
     <string name="back">Назад</string>
     <string name="look_mode">Світла чи темна</string>
