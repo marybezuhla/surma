@@ -4,9 +4,12 @@ import android.content.Context
 import androidx.annotation.StringRes
 import ua.surma.alerts.Direction
 import ua.surma.alerts.Oblast
+import ua.surma.alerts.Place
+import ua.surma.alerts.PlaceKind
 import ua.surma.alerts.Rules
 import ua.surma.alerts.Threat
 import ua.surma.alerts.ThreatType
+import ua.surma.alerts.Translit
 
 /** The words people see for each kind of threat, region and direction, from the app's resources. */
 object Labels {
@@ -67,6 +70,14 @@ object Labels {
         Rules.Pace.SAVER -> R.string.pace_saver
     }
 
+    /** Place names in the register's Ukrainian; in English, in Latin letters by the official rules. */
+    fun name(context: Context, ukrainian: String): String =
+        if (context.resources.configuration.locales[0].language == "uk") ukrainian else Translit.latin(ukrainian)
+
+    /** "Конотопський район" / "Konotopskyi district"; any other place by its name. */
+    fun place(context: Context, p: Place): String =
+        if (p.kind == PlaceKind.DISTRICT) context.getString(R.string.district_name, name(context, p.name)) else name(context, p.name)
+
     /** Regions sorted by their name in the shown language, the way its alphabet goes ("Івано-Франківська" after "Закарпатська"). */
     fun sortedOblasts(context: Context): List<Oblast> {
         val collator = java.text.Collator.getInstance(context.resources.configuration.locales[0])
@@ -85,7 +96,7 @@ object Labels {
 
     /** "напрямок: Конотоп · Сумська область · з півночі": what is known about where, in one line (the name as the register writes it). */
     fun where(context: Context, t: Threat): String = buildList {
-        val to = t.target?.label ?: t.unresolvedTarget
+        val to = t.target?.let { place(context, it) } ?: t.unresolvedTarget?.let { name(context, it) }
         to?.let { add(context.getString(R.string.to_target, it)) }
         t.oblasts.forEach { add(context.getString(oblast(it))) }
         t.from.forEach { add(context.getString(from(it))) }

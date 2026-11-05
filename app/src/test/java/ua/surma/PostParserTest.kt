@@ -119,7 +119,8 @@ class PostParserTest {
 
     @Test fun district() {
         val t = one("Ударні БпЛА у Конотопському районі")
-        assertEquals("Конотопський район", t.target?.label)
+        assertEquals("Конотопський", t.target?.name)
+        assertEquals(ua.surma.alerts.PlaceKind.DISTRICT, t.target?.kind)
         assertEquals(listOf(Oblast.SUMY), t.oblasts)
     }
 

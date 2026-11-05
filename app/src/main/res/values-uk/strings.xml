@@ -64,6 +64,7 @@
     <string name="count_group">група</string>
     <string name="not_on_list">поки немає в списку Сурми</string>
     <string name="as_written">У дописі:</string>
+    <string name="district_name">%1$s район</string>
     <string name="disclaimer">Сурма читає дописи каналу Повітряних сил автоматично й може помилятися. Вона не замінює сирену, офіційні сповіщення та вказівки місцевої влади.</string>
     <string name="notify_denied">Android не дозволяє Сурмі сповіщення: тривоги не звучатимуть.</string>
     <string name="notify_allow">Дозволити сповіщення</string>
