@@ -45,6 +45,15 @@ jobs:
           WANT="$(curl -fsSL https://services.gradle.org/distributions/gradle-8.14.3-bin.zip.sha256)"
           grep -q "^distributionSha256Sum=$WANT$" "$P" || { echo "::error::$P checksum differs from Gradle's: $WANT"; exit 1; }
 
+      # The "what to do" cards must stay word for word as in Sprotyv (medical steps never differ between the apps)
+      - name: Check the cards against Sprotyv
+        run: |
+          set -euo pipefail
+          C=$(grep -oP '^SPROTYV_COMMIT = "\K[0-9a-f]+' scripts/help/copy_cards.py)
+          git clone -q https://github.com/Marybezu/sprotyv "$RUNNER_TEMP/sprotyv"
+          git -C "$RUNNER_TEMP/sprotyv" checkout -q "$C"
+          python3 -I scripts/help/copy_cards.py "$RUNNER_TEMP/sprotyv" --check
+
       - uses: actions/setup-java@b6effb05e454b25005698d916606bdc6ffcbf961 # v5
         with:
           distribution: temurin

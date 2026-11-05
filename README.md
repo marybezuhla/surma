@@ -12,6 +12,7 @@
 - **Що й куди:** тип загрози, кількість, область, напрямок руху («курсом на…») і звідки. Сурма знає всі ≈29,7 тис. міст, селищ і сіл та 136 районів з Кодифікатора, у будь-якому відмінку («на Іванівку», «в районі Білої Церкви»); однакові назви розрізняє за областю з допису, а якщо не може — показує назву текстом. Під кожною загрозою — сам рядок допису, бо автоматичне розпізнавання може помилитися.
 - **Ощадливо:** під час загроз перевіряє частіше (кожні 20–60 с), у тиші — рідше (45 с — 3 хв). Між перевірками телефон спить.
 - **На заблокованому екрані** — лише тип загрози («Сурма: балістика»), без області.
+- **Що робити:** картки «Повітряна тривога», «Балістика», «Дрон поруч», «Сильна кровотеча», «Людина непритомна» дослівно зі «Спротиву», з малюнками й кнопками 112 / 103. Біля кожної загрози — кнопка «Що робити». Фахівець картки ще не перевіряв.
 - **Вигляд:** кольори телефона або світлі й темні теми з рідними назвами. Для телефонів, планшетів і розкладних.
 
 Карта загроз — у наступній версії.
@@ -48,6 +49,7 @@ A private air-raid alert app for Android. It watches the public channel of the U
 - **What and where:** kind, number, region, heading ("towards…") and where from. Surma knows all ≈29.7 thousand cities, towns and villages and 136 districts of the official register, in any grammatical case; places that share a name are told apart by the region in the post, and if that is not possible the name is shown as text. Each threat shows the post's own line, because automatic reading can be wrong.
 - **Easy on the battery:** checks more often while threats come (every 20–60 s), less often when quiet (45 s – 3 min). The phone sleeps between checks.
 - **On the lock screen** only the kind of threat shows ("Surma: ballistic missiles"), never the region.
+- **What to do:** the cards "Air alert", "Ballistic missiles", "Drone nearby", "Severe bleeding" and "Unconscious person", word for word from Sprotyv, with pictures and 112 / 103 buttons. Each threat has a "What to do" button. Not yet reviewed by a specialist.
 - **Look:** the phone's own colours, or light and dark themes. For phones, tablets and foldables.
 
 A threat map comes in the next version.

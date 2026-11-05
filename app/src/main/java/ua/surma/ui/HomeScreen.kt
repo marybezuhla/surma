@@ -48,6 +48,7 @@ import ua.surma.Labels
 import ua.surma.R
 import ua.surma.alerts.Rules
 import ua.surma.alerts.ThreatType
+import ua.surma.help.Help
 import ua.surma.ui.theme.CardTitle
 import ua.surma.ui.theme.Ornament
 import ua.surma.watch.Alerts
@@ -72,15 +73,18 @@ class HomeActions(
     val onNotifySettings: () -> Unit = {},
     val onExact: () -> Unit = {},
     val onBattery: () -> Unit = {},
+    /** Opens a "what to do" card by its id. */
+    val onHelp: (String) -> Unit = {},
 )
 
 /** Watching on or off and how it goes, what to fix, then the latest threats, newest first. */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-internal fun HomeScreen(ui: HomeUi, actions: HomeActions) {
+internal fun HomeScreen(ui: HomeUi, actions: HomeActions, tabs: @Composable () -> Unit = {}) {
     val scheme = MaterialTheme.colorScheme
     Scaffold(
         containerColor = scheme.background,
+        bottomBar = tabs,
         topBar = {
             Column(Modifier.background(scheme.background)) {
                 CenterAlignedTopAppBar(
@@ -124,7 +128,7 @@ internal fun HomeScreen(ui: HomeUi, actions: HomeActions) {
                         )
                     }
                 }
-                items(ui.items, key = { "${it.postId}/${it.threat.sourceLine}/${it.threat.type}" }) { ThreatCard(it, ui.settings) }
+                items(ui.items, key = { "${it.postId}/${it.threat.sourceLine}/${it.threat.type}" }) { ThreatCard(it, ui.settings, actions.onHelp) }
                 item {
                     Text(
                         stringResource(R.string.disclaimer), style = MaterialTheme.typography.bodyMedium, color = scheme.onSurfaceVariant,
@@ -204,7 +208,7 @@ private fun Hint(text: String, button: String, serious: Boolean, onClick: () -> 
 }
 
 @Composable
-private fun ThreatCard(item: FeedItem, settings: WatchSettings) {
+private fun ThreatCard(item: FeedItem, settings: WatchSettings, onHelp: (String) -> Unit) {
     val scheme = MaterialTheme.colorScheme
     val context = LocalContext.current
     val t = item.threat
@@ -242,6 +246,12 @@ private fun ThreatCard(item: FeedItem, settings: WatchSettings) {
                 stringResource(R.string.as_written) + " " + t.sourceLine, style = MaterialTheme.typography.bodySmall,
                 fontStyle = FontStyle.Italic, color = scheme.onSurfaceVariant,
             )
+            // What to do about this kind of threat, word for word from Sprotyv
+            Help.cardFor(t.type)?.let { id ->
+                TextButton(onClick = { onHelp(id) }, contentPadding = PaddingValues(horizontal = 0.dp, vertical = 4.dp)) {
+                    Text(stringResource(R.string.what_to_do), fontWeight = FontWeight.SemiBold)
+                }
+            }
         }
     }
 }
