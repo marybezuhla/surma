@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- The window behind the screen at start, as the default day theme -->
+    <color name="background">#E6DFD5</color>
+    <!-- The icon: crimson, cream, coral (from the author's design) -->
+    <color name="icon_bg">#98022B</color>
+    <color name="icon_cream">#FEF1D9</color>
+    <color name="icon_pink">#FD8082</color>
+</resources>
