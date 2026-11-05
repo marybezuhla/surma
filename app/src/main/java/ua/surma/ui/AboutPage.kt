@@ -117,6 +117,10 @@ internal fun AboutPage(onBack: () -> Unit) {
                     }
                 }
 
+                // The author's letter, as in the author's other apps
+                Spacer(Modifier.height(16.dp))
+                AuthorLetter()
+
                 Spacer(Modifier.height(24.dp))
                 Text(stringResource(R.string.support_title), style = CardTitle, color = scheme.onSurface, textAlign = TextAlign.Center,
                     modifier = Modifier.semantics { heading() })

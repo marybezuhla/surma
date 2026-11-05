@@ -87,7 +87,7 @@
     <string name="notif_public">Surma: %1$s</string>
     <string name="notif_unlock">Unlock to see where</string>
     <string name="about_surma">About Surma</string>
-    <string name="about_surma_summary">What Surma is, where alerts come from, how to support Ukraine, licence and code</string>
+    <string name="about_surma_summary">What Surma is, where alerts come from, a word from the author, how to support Ukraine, licence and code</string>
     <string name="about_what_title">What Surma is</string>
     <string name="about_what">Surma watches the public Telegram channel of the Air Force of the Armed Forces of Ukraine (t.me/kpszsu) and turns its posts into alerts. It is not an official app: it is not made by the Air Force or the state, and it does not speak for them. No server of its own, no accounts, no ads, no tracking.</string>
     <string name="about_privacy_title">What others see</string>
@@ -152,4 +152,14 @@
         <item quantity="one">%d more tip</item>
         <item quantity="other">%d more tips</item>
     </plurals>
+    <!-- The author's letter and Support Ukraine (About) -->
+    <string name="author_letter_1">The idea of making handy Ukrainian apps that ask for as few permissions as possible and work well offline came while I was working at my laptop in near darkness: after yet another Russian drone attack, the power was gone again. That is how Surma began: a warning should get through even when everything else is silent.</string>
+    <string name="author_letter_2">Surma is free software: its code is open, and anyone can check what it does. No ads, no tracking, no accounts. Freedom in software is not a small thing. It is the right to know what happens on your phone, and not to hand your life to anyone.</string>
+    <string name="author_letter_3">Surma was made in Ukraine 🇺🇦. Warn your loved ones, look out for your neighbours, go to shelter. This is who we are, and it is alive. We are alive.</string>
+    <string name="author_letter_4">Yet since 2014, and since 24 February 2022 at full force, Russia has been waging war against my country. Every day, missiles and drones strike cities, homes, hospitals and power plants. The occupiers kill, abduct Ukrainian children, destroy museums, churches and libraries, and ban our language in the lands they hold. Their aim is for Ukrainians to cease to exist as a people.</string>
+    <string name="author_letter_5">We are fighting for the right to be: to live on our own land, speak our own language, create our own things. The freedom you value in software is, for us today, a matter of life.</string>
+    <string name="author_letter_6">If Surma is useful to you, please support Ukraine. I receive none of this money: the links go straight to the organisations\' official sites.</string>
+    <string name="author_letter_7">If you are from Ukraine: thank you for being here. We hold on. We defend, we donate, we look after one another and we choose Ukrainian: together, this brings victory closer.</string>
+    <string name="author_letter_signature">The author of Surma 💙💛</string>
+    <string name="author_author_name">Mariana Bezuhla</string>
 </resources>
