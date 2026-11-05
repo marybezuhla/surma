@@ -7,9 +7,11 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.pm.ServiceInfo
+import android.os.Build
 import android.os.IBinder
 import android.os.PowerManager
 import android.os.SystemClock
+import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -22,20 +24,34 @@ import kotlinx.coroutines.launch
  * Between checks nothing runs and the phone may sleep; each check keeps it awake for a few seconds only.
  */
 class WatchService : Service() {
-    private val scope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
+    // A check that fails in a way nobody foresaw is skipped, never a reason to close Surma
+    private val scope = CoroutineScope(SupervisorJob() + Dispatchers.IO + CoroutineExceptionHandler { _, _ -> })
     private var job: Job? = null
 
     override fun onBind(intent: Intent?): IBinder? = null
 
     override fun onCreate() {
         super.onCreate()
-        Alerts.createChannels(this)
-        startForeground(Alerts.WATCH_ID, Alerts.watching(this, Store.state(this)), ServiceInfo.FOREGROUND_SERVICE_TYPE_SPECIAL_USE)
-        running = this
+        try {
+            Alerts.createChannels(this)
+            val note = Alerts.watching(this, Store.state(this))
+            // The "special use" type exists from Android 14; on Android 12 and 13 a type the phone does not
+            // know is refused and would close Surma, so there the service starts without one
+            if (Build.VERSION.SDK_INT >= 34) {
+                startForeground(Alerts.WATCH_ID, note, ServiceInfo.FOREGROUND_SERVICE_TYPE_SPECIAL_USE)
+            } else {
+                startForeground(Alerts.WATCH_ID, note)
+            }
+            running = this
+        } catch (_: Exception) {
+            // Android refused to start watching now (for example from the background): Surma stays open, and
+            // watching starts the next time Surma is opened
+            stopSelf()
+        }
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        if (!Store.settings(this).enabled) {
+        if (running !== this || !Store.settings(this).enabled) {
             stop(this)
             return START_NOT_STICKY
         }

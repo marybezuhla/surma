@@ -150,9 +150,6 @@ internal fun CardPage(card: Card, help: Help, onBack: () -> Unit, onCall: (Strin
                                 if (f.caption.isNotBlank()) Text(f.caption, style = MaterialTheme.typography.bodyMedium, color = scheme.onSurfaceVariant)
                             }
                         }
-                        pictogram(s.icon)?.let {
-                            Icon(painterResource(it), contentDescription = null, tint = scheme.onSurface, modifier = Modifier.padding(start = 8.dp).size(44.dp))
-                        }
                     }
                     if (i < card.steps.lastIndex) HorizontalDivider(color = scheme.outlineVariant)
                 }
@@ -213,9 +210,4 @@ private fun FigureImage(name: String, caption: String) {
             modifier = Modifier.fillMaxWidth().background(Color.White, RoundedCornerShape(8.dp)).padding(8.dp),
         )
     }
-}
-
-private fun pictogram(name: String): Int? = when (name) {
-    "press" -> R.drawable.pict_press
-    else -> null
 }

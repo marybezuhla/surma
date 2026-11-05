@@ -6,7 +6,7 @@ import org.json.JSONObject
 import ua.surma.alerts.ThreatType
 
 /** One step of a card: what to do now, and why (shown quieter). figure: a guide section whose picture shows it. */
-data class Step(val action: String, val why: String, val figure: String, val icon: String, val wait: Int)
+data class Step(val action: String, val why: String, val figure: String, val wait: Int)
 
 /** A "what to do" card, word for word from Sprotyv; reviewedBy is empty until a specialist has reviewed it. */
 data class Card(
@@ -57,7 +57,7 @@ data class Help(val cards: List<Card>, val figures: Map<String, Figure>) {
             val steps = o.getJSONArray("steps").let { a ->
                 (0 until minOf(a.length(), 12)).map {
                     val s = a.getJSONObject(it)
-                    Step(s.getString("action"), s.optString("why"), s.optString("figure"), s.optString("icon"), s.optInt("wait").coerceIn(0, 240))
+                    Step(s.getString("action"), s.optString("why"), s.optString("figure"), s.optInt("wait").coerceIn(0, 240))
                 }
             }
             val id = o.getString("id")
