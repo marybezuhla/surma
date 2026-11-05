@@ -23,7 +23,12 @@ import ua.surma.alerts.ChannelPost
 import ua.surma.alerts.Oblast
 import ua.surma.alerts.PostParser
 import ua.surma.alerts.Rules
+import ua.surma.help.Help
 import ua.surma.ui.AboutPage
+import ua.surma.ui.CardPage
+import ua.surma.ui.HelpScreen
+import ua.surma.ui.MainActivity
+import ua.surma.ui.Tabs
 import ua.surma.ui.AppLanguage
 import ua.surma.ui.HomeActions
 import ua.surma.ui.HomeScreen
@@ -115,6 +120,20 @@ class ScreensTest {
     @Test fun about() = shot("10-about", Theme.SYSTEM) { AboutPage(onBack = {}) }
     @Config(qualifiers = "en-w400dp-h2600dp-xhdpi")
     @Test fun aboutEnglish() = shot("11-about-english", Theme.PODILLIA) { AboutPage(onBack = {}) }
+
+    private fun help(lang: String) = Help.parse(File("src/main/assets/help/$lang.json").readText())
+    private val tabs: @Composable () -> Unit = { Tabs(MainActivity.Page.HELP) {} }
+
+    @Test fun helpList() = shot("17-help", Theme.SYSTEM) { HelpScreen(help("uk"), {}, {}, tabs) }
+    @Config(qualifiers = "uk-w400dp-h3400dp-xhdpi")
+    @Test fun cardBleeding() = shot("18-card-bleeding", Theme.SYSTEM) { help("uk").let { h -> CardPage(h.card("bleeding")!!, h, {}, {}) } }
+    @Config(qualifiers = "uk-w400dp-h2600dp-xhdpi")
+    @Test fun cardBallistic() = shot("19-card-ballistic", Theme.NEBO) { help("uk").let { h -> CardPage(h.card("ballistic")!!, h, {}, {}) } }
+    @Config(qualifiers = "en-w400dp-h3400dp-night-xhdpi")
+    @Test fun cardUnconsciousDark() = shot("20-card-unconscious-dark", Theme.ZORIANA_NICH) { help("en").let { h -> CardPage(h.card("unconscious")!!, h, {}, {}) } }
+    @Config(qualifiers = "uk-w340dp-h3400dp-xhdpi", fontScale = 1.3f)
+    @Test fun cardNarrowLargeFont() = shot("21-card-air-alert-narrow-large-font", Theme.SYSTEM) { help("uk").let { h -> CardPage(h.card("air-alert")!!, h, {}, {}) } }
+    @Test fun homeWithTabs() = shot("22-home-with-tabs", Theme.SYSTEM) { HomeScreen(HomeUi(on, checked, feed), HomeActions()) { Tabs(MainActivity.Page.HOME) {} } }
 
     @Config(qualifiers = "en-w400dp-h1600dp-xhdpi")
     @Test fun homeEnglish() = home("12-home-english", Theme.NEBO, HomeUi(on, checked, feed))

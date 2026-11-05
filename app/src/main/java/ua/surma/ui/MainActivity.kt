@@ -15,6 +15,7 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -24,6 +25,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import kotlinx.coroutines.launch
+import ua.surma.help.Help
 import ua.surma.ui.theme.Look
 import ua.surma.ui.theme.LookStore
 import ua.surma.ui.theme.SurmaTheme
@@ -61,8 +63,17 @@ class MainActivity : ComponentActivity() {
         setContent {
             val theme = look.value.current(isSystemInDarkTheme())
             var page by rememberSaveable { mutableStateOf(Page.HOME) }
-            BackHandler(enabled = page != Page.HOME) { page = if (page == Page.ABOUT) Page.SETTINGS else Page.HOME }
+            var cardId by rememberSaveable { mutableStateOf<String?>(null) }
+            BackHandler(enabled = page != Page.HOME) {
+                page = when (page) {
+                    Page.ABOUT -> Page.SETTINGS
+                    Page.CARD -> if (cardFrom == Page.HELP) Page.HELP else Page.HOME
+                    else -> Page.HOME
+                }
+            }
             LaunchedEffect(page) { if (page == Page.HOME) refresh() }
+            val openCard = { id: String -> cardFrom = page; cardId = id; page = Page.CARD }
+            val tabs: @Composable () -> Unit = { Tabs(page) { page = it } }
             SurmaTheme(theme) {
                 when (page) {
                     Page.HOME -> HomeScreen(
@@ -73,8 +84,21 @@ class MainActivity : ComponentActivity() {
                             onNotifySettings = { open(Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS).putExtra(Settings.EXTRA_APP_PACKAGE, packageName)) },
                             onExact = { open(Intent(Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM, Uri.parse("package:$packageName"))) },
                             onBattery = { open(Intent(Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS)) },
+                            onHelp = openCard,
                         ),
+                        tabs,
                     )
+                    Page.HELP -> HelpScreen(Help.get(this), onCard = openCard, onCall = ::call, tabs = tabs)
+                    Page.CARD -> {
+                        val help = Help.get(this)
+                        val card = cardId?.let { help.card(it) }
+                        if (card == null) {
+                            // A card that no longer exists (after an update): back to the list
+                            LaunchedEffect(Unit) { page = Page.HELP }
+                        } else {
+                            CardPage(card, help, onBack = { page = if (cardFrom == Page.HELP) Page.HELP else Page.HOME }, onCall = ::call)
+                        }
+                    }
                     Page.SETTINGS -> SettingsPage(
                         settings = home.value.settings,
                         onSettings = ::saveSettings,
@@ -89,6 +113,15 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
+    }
+
+    /** Where a card was opened from, so "back" returns there. */
+    private var cardFrom = Page.HOME
+
+    /** Opens the phone's dialler with the number filled in; nothing is called without the owner's tap. */
+    private fun call(number: String) {
+        if (number !in Help.SERVICES) return
+        open(Intent(Intent.ACTION_DIAL, Uri.parse("tel:$number")))
     }
 
     override fun onResume() {
@@ -136,5 +169,5 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    private enum class Page { HOME, SETTINGS, ABOUT }
+    internal enum class Page { HOME, HELP, CARD, SETTINGS, ABOUT }
 }
