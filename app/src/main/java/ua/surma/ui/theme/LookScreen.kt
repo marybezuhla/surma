@@ -5,8 +5,6 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.FlowRow
-import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -117,11 +115,11 @@ fun LookSettings(
         ) { onChange(look.copy(mode = it)) }
         Spacer(Modifier.height(8.dp))
         SectionTitle(stringResource(R.string.day_theme))
-        // Choosing a day theme brings its night pair along; the night can still be chosen on its own below
+        // Choosing either brings its pair along (Starry night with Sky, and so on); the other can still be changed after
         Group { ThemeRow(Theme.DAY, look.day) { onChange(look.copy(day = it, night = Theme.pairOf(it))) } }
         Spacer(Modifier.height(8.dp))
         SectionTitle(stringResource(R.string.night_theme))
-        Group { ThemeRow(Theme.NIGHT, look.night) { onChange(look.copy(night = it)) } }
+        Group { ThemeRow(Theme.NIGHT, look.night) { onChange(look.copy(night = it, day = Theme.pairOf(it))) } }
     }
 }
 
@@ -185,36 +183,39 @@ internal fun SectionTitle(text: String) {
     )
 }
 
-/** All themes at once, three in a row: none hides behind the edge of the screen. */
-@OptIn(ExperimentalLayoutApi::class)
+/** All themes at once, in rows across the whole width: none hides behind the edge of the screen. */
 @Composable
 private fun ThemeRow(themes: List<Theme>, chosen: Theme, onChoose: (Theme) -> Unit) {
     BoxWithConstraints(Modifier.fillMaxWidth()) {
         val gap = 10.dp
         // Three in a row; two on a narrow screen or with a large font, so a name never breaks inside a word
         val perRow = if (maxWidth < 360.dp * LocalDensity.current.fontScale) 2 else 3
-        // Rounded down to whole dp, so they always fit in a row
-        val width = ((maxWidth - gap * (perRow - 1)) / perRow).value.toInt().dp
-        FlowRow(
+        // Rows of exactly [perRow], each across the whole width: a flowing row could push the third onto the next line
+        Column(
             Modifier.fillMaxWidth().selectableGroup().padding(vertical = 4.dp),
-            horizontalArrangement = Arrangement.spacedBy(gap),
             verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
-            for (theme in themes) {
-                val selected = theme == chosen
-                Column(
-                    Modifier.width(width).selectable(selected, role = Role.RadioButton) { onChoose(theme) },
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                ) {
-                    Sample(theme, selected)
-                    Text(
-                        themeName(theme),
-                        style = MaterialTheme.typography.bodyMedium,
-                        fontWeight = if (selected) FontWeight.Bold else FontWeight.Normal,
-                        color = MaterialTheme.colorScheme.onSurface,
-                        textAlign = TextAlign.Center,
-                        modifier = Modifier.padding(top = 6.dp),
-                    )
+            for (row in themes.chunked(perRow)) {
+                Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(gap)) {
+                    for (theme in row) {
+                        val selected = theme == chosen
+                        Column(
+                            Modifier.weight(1f).selectable(selected, role = Role.RadioButton) { onChoose(theme) },
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                        ) {
+                            Sample(theme, selected)
+                            Text(
+                                themeName(theme),
+                                style = MaterialTheme.typography.bodyMedium,
+                                fontWeight = if (selected) FontWeight.Bold else FontWeight.Normal,
+                                color = MaterialTheme.colorScheme.onSurface,
+                                textAlign = TextAlign.Center,
+                                modifier = Modifier.padding(top = 6.dp),
+                            )
+                        }
+                    }
+                    // A short last row keeps the same sizes
+                    repeat(perRow - row.size) { Spacer(Modifier.weight(1f)) }
                 }
             }
         }
