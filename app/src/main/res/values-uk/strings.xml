@@ -111,11 +111,11 @@
     <string name="mode_dark">Темна</string>
     <string name="day_theme">Тема вдень</string>
     <string name="night_theme">Тема вночі</string>
-    <string name="theme_kreyda">Крейда</string>
+    <string name="theme_linen">Льон</string>
     <string name="theme_visk">Віск</string>
     <string name="theme_nebo">Небо</string>
-    <string name="theme_podillia">Поділля</string>
-    <string name="theme_hutsulshchyna">Гуцульщина</string>
+    <string name="theme_mak">Мак</string>
+    <string name="theme_smereka">Смерека</string>
     <string name="theme_chornozem">Чорнозем</string>
     <string name="theme_system">Кольори телефона</string>
     <string name="theme_system_dark">Кольори телефона</string>
