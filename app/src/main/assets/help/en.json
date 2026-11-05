@@ -75,7 +75,7 @@
     {
      "action": "Outside, a whistle or a rising sound — do not look at the sky, drop: face down, feet toward the blast, hands on your head, mouth slightly open. Then crawl to shelter.",
      "why": "An open mouth protects your eardrums and lungs from the blast wave.",
-     "figure": "3.1"
+     "figure": ""
     },
     {
      "action": "Stay where you are until the all-clear; do not go to the window.",
@@ -147,13 +147,12 @@
    "steps": [
     {
      "action": "Press on the wound with all your weight and do not let go. Tell a specific person to call 103.",
-     "why": "With a femoral artery bleed, a person dies in 2–4 minutes.",
-     "icon": "press"
+     "why": "With a femoral artery bleed, a person dies in 2–4 minutes."
     },
     {
      "action": "Blood spurting from an arm or leg, or pressure fails — tourniquet 5–8 cm above the wound, not on a joint, until bleeding stops completely. Note the time.",
      "why": "Wound location unclear — as high on the limb as possible. Never loosen a tourniquet — only a medic removes it.",
-     "figure": "7.2"
+     "figure": ""
     },
     {
      "action": "No tourniquet — a belt, shoelace or wire will not do. Keep pressing with all your weight or pack the wound with gauze.",
@@ -206,7 +205,7 @@
     {
      "action": "Breathing — turn them on their side, check breathing every minute. Suspected spine injury — keep them on their back, head still, push the jaw forward.",
      "why": "A spinal injury is possible after a fall from height, a road crash, a blow to the back.",
-     "figure": "7.4"
+     "figure": ""
     },
     {
      "action": "Not breathing or only occasional gasps — start CPR on a hard surface. Child or infant — give 5 breaths first.",
@@ -215,41 +214,17 @@
     {
      "action": "Press the centre of the chest: adult 5–6 cm, child ~5 cm, infant with two thumbs ~4 cm. 30 compressions, 2 breaths, 100–120 per minute.",
      "why": "Do not stop until breathing returns or medics arrive. Cannot give breaths — do compressions only, that also saves lives. Swap every 2 minutes.",
-     "figure": "7.7"
+     "figure": ""
     }
    ]
   }
  ],
  "figures": {
-  "3.1": {
-   "pictures": [
-    "fig_d52368b31358cc30"
-   ],
-   "caption": "Fig. 3.1. Position during sudden shelling in the open"
-  },
   "3.2": {
    "pictures": [
     "fig_3fd3c7ffba2409fa"
    ],
    "caption": "Fig. 3.2. The two-wall rule: safe zones of a flat (green) — hallway and bathroom without windows"
-  },
-  "7.2": {
-   "pictures": [
-    "fig_80bb936d11c78f6d"
-   ],
-   "caption": "Fig. 7.1. Applying a tourniquet to a limb"
-  },
-  "7.4": {
-   "pictures": [
-    "fig_a0acb232cdd99d47"
-   ],
-   "caption": "Fig. 7.2. Recovery position for an unconscious person who is breathing"
-  },
-  "7.7": {
-   "pictures": [
-    "fig_9a9ed4aaab6a264b"
-   ],
-   "caption": "Fig. 7.3. Chest compressions"
   }
  }
 }
