@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
-"""Copies Surma's "What to do" cards word for word from Sprotyv (https://github.com/Marybezu/sprotyv), pinned below.
+"""Copies Surma's "What to do" cards word for word from Sprotyv (https://github.com/marybezuhla/sprotyv), pinned below.
 
 The cards are adapted from the open "Довідник виживання" 2.3 and stay under CC BY-SA 4.0 (see NOTICE.md).
 Medical steps must never differ between the two apps, so CI runs this with --check: any difference fails.
 
-    git clone https://github.com/Marybezu/sprotyv /tmp/sprotyv
+    git clone https://github.com/marybezuhla/sprotyv /tmp/sprotyv
     git -C /tmp/sprotyv checkout <SPROTYV_COMMIT>
     python3 -I scripts/help/copy_cards.py /tmp/sprotyv [--check]
 """

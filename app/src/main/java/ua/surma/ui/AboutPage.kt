@@ -197,5 +197,5 @@ private fun CauseGroup(@StringRes title: Int, causes: List<Cause>, open: (String
     }
 }
 
-internal const val SOURCE_URL = "https://github.com/Marybezu/surma"
+internal const val SOURCE_URL = "https://github.com/marybezuhla/surma"
 internal const val LICENSE_URL = "$SOURCE_URL/blob/main/LICENSE"
