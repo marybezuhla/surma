@@ -67,8 +67,11 @@ object Labels {
         Rules.Pace.SAVER -> R.string.pace_saver
     }
 
-    /** Regions in the order of the list, sorted by their name in the shown language. */
-    fun sortedOblasts(context: Context): List<Oblast> = Oblast.entries.sortedBy { context.getString(oblast(it)) }
+    /** Regions sorted by their name in the shown language, the way its alphabet goes ("Івано-Франківська" after "Закарпатська"). */
+    fun sortedOblasts(context: Context): List<Oblast> {
+        val collator = java.text.Collator.getInstance(context.resources.configuration.locales[0])
+        return Oblast.entries.sortedWith(compareBy(collator) { context.getString(oblast(it)) })
+    }
 
     /** "Ударні БпЛА ×3", "Ударні БпЛА (група)". */
     fun title(context: Context, t: Threat): String {

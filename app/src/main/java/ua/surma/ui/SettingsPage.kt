@@ -15,6 +15,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.selection.selectable
+import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.selection.toggleable
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.CenterAlignedTopAppBar
@@ -24,6 +26,7 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
@@ -46,7 +49,6 @@ import ua.surma.ui.theme.Look
 import ua.surma.ui.theme.LookSettings
 import ua.surma.ui.theme.Ornament
 import ua.surma.ui.theme.SectionTitle
-import ua.surma.ui.theme.Segments
 import ua.surma.watch.WatchSettings
 
 /** Settings: the regions, how often to check, then language and look, and the way to "About Surma". */
@@ -139,11 +141,26 @@ private fun Checking(settings: WatchSettings, onSettings: (WatchSettings) -> Uni
             HorizontalDivider(color = scheme.outlineVariant)
             Text(stringResource(R.string.pace_title), style = MaterialTheme.typography.bodyLarge, color = scheme.onSurface,
                 modifier = Modifier.padding(start = 4.dp, top = 12.dp, bottom = 8.dp))
-            Segments(options = Rules.Pace.entries.map { it to Labels.pace(it) }, chosen = settings.pace) { onSettings(settings.copy(pace = it)) }
-            Text(
-                stringResource(R.string.pace_summary, settings.pace.activeSeconds.toInt(), settings.pace.quietSeconds.toInt()),
-                style = MaterialTheme.typography.bodyMedium, color = scheme.onSurface, modifier = Modifier.padding(start = 4.dp, top = 8.dp),
-            )
+            Column(Modifier.selectableGroup()) {
+                for (pace in Rules.Pace.entries) {
+                    val chosen = pace == settings.pace
+                    Row(
+                        Modifier.fillMaxWidth().heightIn(min = 56.dp)
+                            .selectable(chosen, role = Role.RadioButton) { onSettings(settings.copy(pace = pace)) }
+                            .padding(horizontal = 4.dp, vertical = 6.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        RadioButton(selected = chosen, onClick = null)
+                        Spacer(Modifier.width(12.dp))
+                        Column {
+                            Text(stringResource(Labels.pace(pace)), style = MaterialTheme.typography.bodyLarge, color = scheme.onSurface,
+                                fontWeight = if (chosen) FontWeight.SemiBold else FontWeight.Normal)
+                            Text(stringResource(R.string.pace_summary, pace.activeSeconds.toInt(), pace.quietSeconds.toInt()),
+                                style = MaterialTheme.typography.bodyMedium, color = scheme.onSurfaceVariant)
+                        }
+                    }
+                }
+            }
             Text(stringResource(R.string.pace_note), style = MaterialTheme.typography.bodyMedium, color = scheme.onSurfaceVariant,
                 modifier = Modifier.padding(start = 4.dp, top = 4.dp, bottom = 8.dp))
         }

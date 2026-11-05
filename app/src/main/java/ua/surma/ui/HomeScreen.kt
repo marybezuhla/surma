@@ -2,6 +2,7 @@ package ua.surma.ui
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -154,8 +155,9 @@ private fun WatchCard(ui: HomeUi, actions: HomeActions) {
     )
     Surface(
         shape = RoundedCornerShape(16.dp),
-        color = if (s.enabled) scheme.primaryContainer else scheme.surface,
-        border = BorderStroke(1.dp, if (s.enabled) scheme.primary else scheme.outlineVariant),
+        color = scheme.surface,
+        // On: a thick frame in the theme's accent, so the state is clear without telling colours apart
+        border = BorderStroke(if (s.enabled) 2.dp else 1.dp, if (s.enabled) scheme.primary else scheme.outlineVariant),
         modifier = Modifier.fillMaxWidth(),
     ) {
         Column(Modifier.padding(horizontal = 16.dp, vertical = 8.dp)) {
@@ -175,9 +177,11 @@ private fun WatchCard(ui: HomeUi, actions: HomeActions) {
                 color = if (s.enabled && st.problem != null) scheme.error else scheme.onSurfaceVariant,
                 modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite },
             )
-            TextButton(onClick = actions.onSettings, contentPadding = PaddingValues(horizontal = 0.dp, vertical = 4.dp)) {
-                Text(regions, style = MaterialTheme.typography.bodyMedium, textAlign = TextAlign.Start)
-            }
+            Text(
+                regions, style = MaterialTheme.typography.bodyMedium, color = scheme.primary, fontWeight = FontWeight.SemiBold,
+                modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp).clickable(role = Role.Button, onClick = actions.onSettings)
+                    .padding(vertical = 12.dp),
+            )
         }
     }
 }
@@ -188,11 +192,12 @@ private fun Hint(text: String, button: String, serious: Boolean, onClick: () -> 
     val scheme = MaterialTheme.colorScheme
     Surface(
         shape = RoundedCornerShape(16.dp),
-        color = if (serious) scheme.errorContainer else scheme.secondaryContainer,
+        color = if (serious) scheme.errorContainer else scheme.surface,
+        border = BorderStroke(1.dp, if (serious) scheme.error else scheme.outline),
         modifier = Modifier.fillMaxWidth(),
     ) {
         Column(Modifier.padding(16.dp)) {
-            Text(text, style = MaterialTheme.typography.bodyMedium, color = if (serious) scheme.onErrorContainer else scheme.onSecondaryContainer)
+            Text(text, style = MaterialTheme.typography.bodyMedium, color = if (serious) scheme.onErrorContainer else scheme.onSurface)
             TextButton(onClick = onClick, contentPadding = PaddingValues(horizontal = 0.dp, vertical = 4.dp)) { Text(button) }
         }
     }

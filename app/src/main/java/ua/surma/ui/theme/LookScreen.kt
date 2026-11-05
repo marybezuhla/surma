@@ -29,6 +29,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.clearAndSetSemantics
@@ -37,6 +38,9 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.compose.foundation.text.BasicText
+import androidx.compose.foundation.text.TextAutoSize
 import ua.surma.R
 import ua.surma.ui.AppLanguage
 
@@ -151,14 +155,17 @@ internal fun <T> Segments(options: List<Pair<T, Int>>, chosen: T, onChoose: (T) 
                     .padding(horizontal = 2.dp),
                 contentAlignment = Alignment.Center,
             ) {
-                Text(
+                // A long word ("Українська" with a large font) gets smaller rather than cut off
+                BasicText(
                     stringResource(label),
-                    style = MaterialTheme.typography.bodyMedium,
+                    style = MaterialTheme.typography.bodyMedium.copy(
+                        fontWeight = if (selected) FontWeight.SemiBold else FontWeight.Normal,
+                        color = if (selected) scheme.onSurface else scheme.onSurfaceVariant,
+                        textAlign = TextAlign.Center,
+                    ),
                     maxLines = 1,
                     softWrap = false,
-                    fontWeight = if (selected) FontWeight.SemiBold else FontWeight.Normal,
-                    color = if (selected) scheme.onSurface else scheme.onSurfaceVariant,
-                    textAlign = TextAlign.Center,
+                    autoSize = TextAutoSize.StepBased(minFontSize = 10.sp, maxFontSize = MaterialTheme.typography.bodyMedium.fontSize),
                 )
             }
         }
@@ -184,8 +191,10 @@ internal fun SectionTitle(text: String) {
 private fun ThemeRow(themes: List<Theme>, chosen: Theme, onChoose: (Theme) -> Unit) {
     BoxWithConstraints(Modifier.fillMaxWidth()) {
         val gap = 10.dp
-        // Rounded down to whole dp, so three always fit in a row on any screen
-        val width = ((maxWidth - gap * 2) / 3).value.toInt().dp
+        // Three in a row; two on a narrow screen or with a large font, so a name never breaks inside a word
+        val perRow = if (maxWidth < 360.dp * LocalDensity.current.fontScale) 2 else 3
+        // Rounded down to whole dp, so they always fit in a row
+        val width = ((maxWidth - gap * (perRow - 1)) / perRow).value.toInt().dp
         FlowRow(
             Modifier.fillMaxWidth().selectableGroup().padding(vertical = 4.dp),
             horizontalArrangement = Arrangement.spacedBy(gap),
