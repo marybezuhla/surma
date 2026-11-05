@@ -146,4 +146,10 @@
     <string name="org_redcross_what">Національне товариство Червоного Хреста: допомога людям, що постраждали від війни</string>
     <string name="org_redcross_url">https://redcross.org.ua/</string>
     <string name="support_any">Підтримати можна й будь-який перевірений фонд, волонтерів чи підрозділ, яким ви довіряєте. Перевіряйте збори: офіційні реквізити й звіти.</string>
+    <plurals name="hints_more">
+        <item quantity="one">Ще %d порада</item>
+        <item quantity="few">Ще %d поради</item>
+        <item quantity="many">Ще %d порад</item>
+        <item quantity="other">Ще %d поради</item>
+    </plurals>
 </resources>

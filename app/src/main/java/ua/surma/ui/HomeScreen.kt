@@ -34,6 +34,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.pluralStringResource
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.heading
@@ -108,11 +113,7 @@ internal fun HomeScreen(ui: HomeUi, actions: HomeActions, tabs: @Composable () -
                 verticalArrangement = Arrangement.spacedBy(12.dp),
             ) {
                 item { WatchCard(ui, actions) }
-                if (ui.settings.enabled) {
-                    if (!ui.canNotify) item { Hint(stringResource(R.string.notify_denied), stringResource(R.string.notify_allow), true, actions.onNotifySettings) }
-                    if (!ui.exactAllowed) item { Hint(stringResource(R.string.exact_hint), stringResource(R.string.exact_allow), false, actions.onExact) }
-                    if (!ui.batteryFree) item { Hint(stringResource(R.string.battery_hint), stringResource(R.string.battery_open), false, actions.onBattery) }
-                }
+                if (ui.settings.enabled) item { Hints(ui, actions) }
                 item {
                     Text(
                         stringResource(R.string.recent_title), style = CardTitle, color = scheme.onSurface, textAlign = TextAlign.Center,
@@ -187,6 +188,31 @@ private fun WatchCard(ui: HomeUi, actions: HomeActions) {
                     .padding(vertical = 12.dp),
             )
         }
+    }
+}
+
+/**
+ * What to fix for alerts to work well. Only the most important one shows; the rest wait behind one line, so the
+ * home screen is about alerts, not about warnings.
+ */
+@Composable
+private fun Hints(ui: HomeUi, actions: HomeActions) {
+    val all = buildList<@Composable () -> Unit> {
+        if (!ui.canNotify) add { Hint(stringResource(R.string.notify_denied), stringResource(R.string.notify_allow), true, actions.onNotifySettings) }
+        if (!ui.exactAllowed) add { Hint(stringResource(R.string.exact_hint), stringResource(R.string.exact_allow), false, actions.onExact) }
+        if (!ui.batteryFree) add { Hint(stringResource(R.string.battery_hint), stringResource(R.string.battery_open), false, actions.onBattery) }
+    }
+    if (all.isEmpty()) return
+    var more by rememberSaveable { mutableStateOf(false) }
+    Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+        all.first()()
+        val rest = all.size - 1
+        if (rest > 0 && !more) {
+            TextButton(onClick = { more = true }, modifier = Modifier.fillMaxWidth()) {
+                Text(pluralStringResource(R.plurals.hints_more, rest, rest))
+            }
+        }
+        if (more) all.drop(1).forEach { it() }
     }
 }
 

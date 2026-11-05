@@ -148,4 +148,8 @@
     <string name="org_redcross_what">The national Red Cross society: help for people hurt by the war</string>
     <string name="org_redcross_url">https://redcross.org.ua/en/donate</string>
     <string name="support_any">You can also support any trusted foundation, volunteers or unit you know. Check fundraisers: official details and reports.</string>
+    <plurals name="hints_more">
+        <item quantity="one">%d more tip</item>
+        <item quantity="other">%d more tips</item>
+    </plurals>
 </resources>
