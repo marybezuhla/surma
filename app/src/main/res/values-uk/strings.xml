@@ -89,7 +89,7 @@
     <string name="about_what_title">Що таке Сурма</string>
     <string name="about_what">Сурма стежить за публічним Telegram-каналом Повітряних сил ЗСУ (t.me/kpszsu) і перетворює його дописи на сповіщення. Це не офіційний застосунок: його не робили Повітряні сили чи держава, і він не говорить від їхнього імені. Без власного сервера, акаунтів, реклами й стеження.</string>
     <string name="about_privacy_title">Що бачать інші</string>
-    <string name="about_privacy">Сурма читає публічну вебсторінку каналу на t.me, тож Telegram бачить адресу телефона щоразу, коли вона перевіряє (кожні 20 секунд — 3 хвилини, поки стеження ввімкнено). Більше нічого не надсилається: Сурма не знає й не передає, де ви. Позначені області лишаються на цьому телефоні.</string>
+    <string name="about_privacy">Сурма читає публічну вебсторінку каналу на t.me, тож Telegram бачить адресу телефону щоразу, коли вона перевіряє (кожні 20 секунд — 3 хвилини, поки стеження ввімкнено). Більше нічого не надсилається: Сурма не знає й не передає, де ви. Позначені області лишаються на цьому телефоні.</string>
     <string name="about_text">© Автори Сурми. Вільне програмне забезпечення за GNU GPL версії 3 або (на ваш вибір) будь-якої новішої (GPL-3.0-or-later), без жодних гарантій. Використовує бібліотеки AndroidX і Kotlin (Apache 2.0, The Android Open Source Project і JetBrains). Код написано за допомогою ШІ (Claude, Anthropic) під керівництвом і з тестуванням автора.</string>
     <string name="about_data">Місця: Кодифікатор адміністративно-територіальних одиниць (КАТОТТГ), відкриті дані Мінрозвитку громад і територій. Їхні точки на карті: © учасники OpenStreetMap, ліцензія Open Database License (ODbL), через проєкт ua-geo. Картки «Що робити»: зі «Спротиву», за відкритим «Довідником виживання» 2.3 (github.com/snegireff/dovidnyk-vyzhyvannia), CC BY-SA 4.0, з його малюнками; піктограми кроків — Material Symbols (Google, Apache 2.0).</string>
     <string name="tab_threats">Загрози</string>
@@ -117,8 +117,8 @@
     <string name="theme_mak">Мак</string>
     <string name="theme_smereka">Смерека</string>
     <string name="theme_chornozem">Чорнозем</string>
-    <string name="theme_system">Кольори телефона</string>
-    <string name="theme_system_dark">Кольори телефона</string>
+    <string name="theme_system">Кольори телефону</string>
+    <string name="theme_system_dark">Кольори телефону</string>
     <string name="theme_glyna">Глина</string>
     <string name="theme_zhar">Жар</string>
     <string name="theme_kalyna">Калина</string>

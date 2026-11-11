@@ -21,7 +21,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 
@@ -48,7 +47,7 @@ fun AuthorLetter(modifier: Modifier = Modifier) {
                 Text(stringResource(p), style = MaterialTheme.typography.bodyLarge, color = scheme.onSurface,
                     textAlign = TextAlign.Center, modifier = Modifier.fillMaxWidth())
             }
-            Text(stringResource(ua.surma.R.string.author_letter_signature), style = MaterialTheme.typography.bodyLarge, fontStyle = FontStyle.Italic,
+            Text(stringResource(ua.surma.R.string.author_letter_signature), style = MaterialTheme.typography.bodyLarge,
                 color = scheme.primary, textAlign = TextAlign.Center, modifier = Modifier.fillMaxWidth())
             Image(
                 painterResource(ua.surma.R.drawable.author_photo),
