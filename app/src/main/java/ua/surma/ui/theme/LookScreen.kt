@@ -36,6 +36,7 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.unit.sp
 import androidx.compose.foundation.text.BasicText
 import androidx.compose.foundation.text.TextAutoSize
@@ -204,14 +205,7 @@ private fun ThemeRow(themes: List<Theme>, chosen: Theme, onChoose: (Theme) -> Un
                             horizontalAlignment = Alignment.CenterHorizontally,
                         ) {
                             Sample(theme, selected)
-                            Text(
-                                themeName(theme),
-                                style = MaterialTheme.typography.bodyMedium,
-                                fontWeight = if (selected) FontWeight.Bold else FontWeight.Normal,
-                                color = MaterialTheme.colorScheme.onSurface,
-                                textAlign = TextAlign.Center,
-                                modifier = Modifier.padding(top = 6.dp),
-                            )
+                            ThemeName(themeName(theme), selected)
                         }
                     }
                     // A short last row keeps the same sizes
@@ -220,6 +214,27 @@ private fun ThemeRow(themes: List<Theme>, chosen: Theme, onChoose: (Theme) -> Un
             }
         }
     }
+}
+
+/**
+ * A theme's name under its picture, as in Komora: never broken inside a word («Viburnu / m» on a narrow phone
+ * with large text). One word per line at most; a word that does not fit gets a smaller size instead.
+ */
+@Composable
+private fun ThemeName(name: String, selected: Boolean) {
+    val style = MaterialTheme.typography.bodyMedium.merge(
+        color = MaterialTheme.colorScheme.onSurface,
+        fontWeight = if (selected) FontWeight.Bold else FontWeight.Normal,
+        textAlign = TextAlign.Center,
+    )
+    // One word per line: any other break overflows, so the text shrinks instead
+    BasicText(
+        name.replace(' ', '\n'),
+        modifier = Modifier.fillMaxWidth().padding(top = 6.dp).semantics { contentDescription = name },
+        style = style,
+        maxLines = name.split(' ').size,
+        autoSize = TextAutoSize.StepBased(minFontSize = 8.sp, maxFontSize = style.fontSize, stepSize = 0.5.sp),
+    )
 }
 
 /** A tiny Surma: the background, one card with two lines of text and a button, in the theme's colours. */
